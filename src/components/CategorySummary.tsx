@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Txn } from '../types'
 import { alpha, isExpense, isIncome, yen } from '../lib/finance'
 import type { Classifier } from '../lib/fixed'
+import { Money } from './Money'
 
 interface Props {
   rows: Txn[]
@@ -66,7 +67,7 @@ export function CategorySummary({ rows, n, catColor, isFixed, onPick }: Props) {
                     <span className="tag" style={{ background: alpha(c, 0.15), color: c }}>{l.name}</span>
                   </td>
                   <td className="hide-sm"><Badge f={l.fixed > 0} part={part} /></td>
-                  <td className="num"><b>{yen(l.total)}</b></td>
+                  <td className="num"><b><Money v={l.total} /></b></td>
                   <td className="num">{yen(l.total / n)}</td>
                   <td className="num">{((l.total / total) * 100).toFixed(1)}%</td>
                   <td className="hide-sm"><div className="track"><div className="fill" style={{ width: `${(l.total / lines[0].total) * 100}%`, background: c }} /></div></td>
@@ -90,9 +91,9 @@ export function CategorySummary({ rows, n, catColor, isFixed, onPick }: Props) {
           <tfoot>
             <tr><td>固定費</td><td className="hide-sm" /><td className="num">{yen(fixed)}</td><td className="num">{yen(fixed / n)}</td><td className="num">{((fixed / (total || 1)) * 100).toFixed(1)}%</td><td className="hide-sm" /></tr>
             <tr><td>変動費</td><td className="hide-sm" /><td className="num">{yen(total - fixed)}</td><td className="num">{yen((total - fixed) / n)}</td><td className="num">{(((total - fixed) / (total || 1)) * 100).toFixed(1)}%</td><td className="hide-sm" /></tr>
-            <tr className="grand"><td>支出合計</td><td className="hide-sm" /><td className="num">{yen(total)}</td><td className="num">{yen(total / n)}</td><td className="num">100%</td><td className="hide-sm" /></tr>
+            <tr className="grand"><td>支出合計</td><td className="hide-sm" /><td className="num"><Money v={total} /></td><td className="num"><Money v={total / n} /></td><td className="num">100%</td><td className="hide-sm" /></tr>
             <tr><td>収入合計</td><td className="hide-sm" /><td className="num good">{yen(income)}</td><td className="num good">{yen(income / n)}</td><td className="num" /><td className="hide-sm" /></tr>
-            <tr className="grand"><td>収支</td><td className="hide-sm" /><td className={`num ${income - total >= 0 ? 'good' : 'bad'}`}>{yen(income - total)}</td><td className={`num ${income - total >= 0 ? 'good' : 'bad'}`}>{yen((income - total) / n)}</td><td className="num" /><td className="hide-sm" /></tr>
+            <tr className="grand"><td>収支</td><td className="hide-sm" /><td className={`num ${income - total >= 0 ? 'good' : 'bad'}`}><Money v={income - total} /></td><td className={`num ${income - total >= 0 ? 'good' : 'bad'}`}><Money v={(income - total) / n} /></td><td className="num" /><td className="hide-sm" /></tr>
           </tfoot>
         </table>
       </div>

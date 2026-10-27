@@ -21,6 +21,7 @@ import { type Kind, TxTable } from './components/TxTable'
 import { FixedVariableCard } from './components/FixedVariableCard'
 import { FixedRulesEditor } from './components/FixedRulesEditor'
 import { CategorySummary } from './components/CategorySummary'
+import { PeriodSlider } from './components/PeriodSlider'
 
 const loadView = (): View => {
   try {
@@ -174,6 +175,15 @@ export default function App() {
         live={SOURCE === 'local' && !!import.meta.hot}
         loading={status.kind === 'loading'}
       />
+      <div className="card slider-card">
+        <PeriodSlider
+          periods={periods} sums={sums} range={[a, b]} kind={view.mode === 'month' ? 'single' : 'range'}
+          onChange={(na, nb) => {
+            if (view.mode === 'month') goMonth(na)
+            else if (na !== a || nb !== b) setView({ mode: 'range', from: periods[na].start, to: periods[nb].start })
+          }}
+        />
+      </div>
       {errorMsg && <div className="toast bad" onClick={reload}>⚠︎ {errorMsg}（タップで再試行・表示は前回のデータ）</div>}
 
       <div className="grid" key={`${a}-${b}`}>

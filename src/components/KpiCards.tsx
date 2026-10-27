@@ -1,5 +1,6 @@
 import type { Summary } from '../lib/finance'
 import { yen } from '../lib/finance'
+import { Money } from './Money'
 
 interface Props {
   cur: Summary
@@ -34,14 +35,14 @@ export function KpiCards({ cur, prev, prevLabel, n, totalDays, avgPerPeriod, avg
     <>
       <div className="card span-3 kpi-card">
         <div className="kpi-label"><span className="dot" style={{ background: 'var(--income)' }} />{multi ? '収入合計' : '収入'}</div>
-        <div className="kpi-value">{yen(cur.inc)}</div>
+        <div className="kpi-value"><Money v={cur.inc} /></div>
         <div className="kpi-delta">
           {prev ? <Delta cur={cur.inc} prev={prev.inc} higherIsBad={false} label={prevLabel} /> : multi && <>月平均 {yen(cur.inc / n)}</>}
         </div>
       </div>
       <div className="card span-3 kpi-card">
         <div className="kpi-label"><span className="dot" style={{ background: 'var(--expense)' }} />{multi ? '支出合計' : '支出'}</div>
-        <div className="kpi-value">{yen(cur.exp)}</div>
+        <div className="kpi-value"><Money v={cur.exp} /></div>
         <div className="kpi-delta">
           {prev ? <Delta cur={cur.exp} prev={prev.exp} higherIsBad label={prevLabel} />
             : annualized ? <>年間見込み {yen(annualized)}</>
@@ -50,14 +51,14 @@ export function KpiCards({ cur, prev, prevLabel, n, totalDays, avgPerPeriod, avg
       </div>
       <div className="card span-3 kpi-card">
         <div className="kpi-label"><span className="dot" style={{ background: 'var(--accent)' }} />{multi ? '収支合計' : '収支'}</div>
-        <div className={`kpi-value ${cur.net >= 0 ? 'good' : 'bad'}`}>{yen(cur.net)}</div>
+        <div className={`kpi-value ${cur.net >= 0 ? 'good' : 'bad'}`}><Money v={cur.net} /></div>
         <div className="kpi-delta">貯蓄率 <b>{rate}%</b>{multi && <> ・ 月平均 {yen(cur.net / n)}</>}</div>
       </div>
       <div className="card span-3 kpi-card">
         {multi ? (
           <>
             <div className="kpi-label"><span className="dot" style={{ background: 'var(--warn)' }} />月平均支出</div>
-            <div className="kpi-value">{yen(perPeriod)}</div>
+            <div className="kpi-value"><Money v={perPeriod} /></div>
             <div className="kpi-delta">
               全期間平均 {yen(avgPerPeriod)}{' '}
               <span className={perPeriod > avgPerPeriod ? 'bad' : 'good'}>{perPeriod > avgPerPeriod ? '▲' : '▼'}</span>
@@ -66,7 +67,7 @@ export function KpiCards({ cur, prev, prevLabel, n, totalDays, avgPerPeriod, avg
         ) : (
           <>
             <div className="kpi-label"><span className="dot" style={{ background: 'var(--warn)' }} />1日あたり支出</div>
-            <div className="kpi-value">{yen(perDay)}</div>
+            <div className="kpi-value"><Money v={perDay} /></div>
             <div className="kpi-delta">
               全期間平均 {yen(avgPerDay)}{' '}
               <span className={perDay > avgPerDay ? 'bad' : 'good'}>{perDay > avgPerDay ? '▲' : '▼'}</span>

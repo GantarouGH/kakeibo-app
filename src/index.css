@@ -298,3 +298,38 @@ table.heat { width: 100%; border-collapse: separate; border-spacing: 3px; font-s
 }
 
 .footer { color: var(--muted); font-size: 11px; text-align: center; margin-top: 28px; }
+
+/* ---------- period slider ---------- */
+.slider-card { padding: 14px 20px 8px; margin-bottom: 16px; }
+.pslider { user-select: none; -webkit-user-select: none; }
+.ps-track { position: relative; height: 54px; cursor: pointer; touch-action: none; outline: none; border-radius: 10px; }
+.ps-track:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+.ps-bars { position: absolute; inset: 0 0 14px; display: flex; align-items: flex-end; gap: 3px; padding: 0 2px; }
+.ps-bar { flex: 1; border-radius: 4px 4px 2px 2px; background: var(--grid); transition: background 0.2s, height 0.3s; }
+.ps-bar.in { background: color-mix(in srgb, var(--accent) 45%, transparent); }
+.ps-rail { position: absolute; left: 0; right: 0; bottom: 5px; height: 4px; border-radius: 99px; background: var(--grid); }
+.ps-band {
+  position: absolute; bottom: 5px; height: 4px; border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent), #ec4899); transition: left 0.15s, width 0.15s;
+}
+.ps-band::before { content: ''; position: absolute; left: 0; right: 0; bottom: -6px; top: -44px; cursor: grab; }
+.dragging .ps-band, .dragging .ps-thumb { transition: none; }
+.dragging .ps-band::before { cursor: grabbing; }
+.ps-thumb {
+  position: absolute; bottom: 7px; width: 18px; height: 18px; margin-left: -9px; transform: translateY(50%);
+  border-radius: 50%; background: #fff; border: 3px solid var(--accent);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); cursor: grab; transition: left 0.15s; z-index: 2;
+}
+.ps-thumb::after { content: ''; position: absolute; inset: -12px; } /* タッチ領域を拡大 */
+.ps-labels { position: relative; height: 18px; font-size: 10px; color: var(--muted); }
+.ps-labels span { position: absolute; transform: translateX(-50%); white-space: nowrap; top: 3px; }
+.ps-labels span.in { color: var(--text); font-weight: 600; }
+
+/* ---------- privacy ---------- */
+.icon-btn.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.masked { letter-spacing: 0.08em; opacity: 0.75; }
+
+@media (max-width: 600px) {
+  .slider-card { padding: 10px 12px 4px; margin-bottom: 10px; }
+  .ps-track { height: 46px; }
+}

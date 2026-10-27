@@ -2,6 +2,7 @@ import { Doughnut } from 'react-chartjs-2'
 import type { Plugin } from 'chart.js'
 import type { ChartColors } from '../lib/chartTheme'
 import { yen } from '../lib/finance'
+import { MASK, usePrivacy } from '../hooks/usePrivacy'
 
 interface Props {
   cats: [string, number][]
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function CategoryDonut({ cats, catColor, selected, onSelect, colors }: Props) {
+  const hidden = usePrivacy()
   const total = cats.reduce((s, c) => s + c[1], 0)
   const toggle = (c: string) => onSelect(selected === c ? null : c)
 
@@ -28,7 +30,7 @@ export function CategoryDonut({ cats, catColor, selected, onSelect, colors }: Pr
       ctx.fillText(sel ? sel[0] : '支出合計', x, y - 12)
       ctx.fillStyle = colors.text
       ctx.font = `700 18px ${colors.font}`
-      ctx.fillText(yen(sel ? sel[1] : total), x, y + 12)
+      ctx.fillText(hidden ? MASK : yen(sel ? sel[1] : total), x, y + 12)
       ctx.restore()
     },
   }
@@ -38,7 +40,7 @@ export function CategoryDonut({ cats, catColor, selected, onSelect, colors }: Pr
       <div className="card-title">カテゴリ別支出 {selected && <button className="btn" style={{ height: 24 }} onClick={() => onSelect(null)}>解除</button>}</div>
       <div className="chart-box" style={{ height: 200 }}>
         <Doughnut
-          key={selected ?? '_'}
+          key={`${selected ?? '_'}${hidden}`}
           data={{
             labels: cats.map(c => c[0]),
             datasets: [{

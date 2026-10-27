@@ -1,5 +1,6 @@
 import type { Period } from '../types'
 import type { ThemePref } from '../hooks/useTheme'
+import { setPrivacy, usePrivacy } from '../hooks/usePrivacy'
 import { days, periodLabel, periodRange } from '../lib/finance'
 import { type View, periodYear, spanDays, yearsOf } from '../lib/range'
 
@@ -22,8 +23,19 @@ const MODES = [
   { k: 'range', label: '期間' },
 ] as const
 
+function EyeIcon({ off }: { off: boolean }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+      <circle cx="12" cy="12" r="3" />
+      {off && <line x1="3" y1="3" x2="21" y2="21" />}
+    </svg>
+  )
+}
+
 export function Header({ periods, view, range: [a, b], onView, theme, onTheme, onReload, onSettings, live, loading }: Props) {
   const last = periods.length - 1
+  const hidden = usePrivacy()
   const years = yearsOf(periods)
 
   const switchMode = (m: View['mode']) => {
@@ -97,6 +109,15 @@ export function Header({ periods, view, range: [a, b], onView, theme, onTheme, o
         </div>
 
         <div className="ctrl-row">
+          <button
+            className={`icon-btn ${hidden ? 'on' : ''}`}
+            onClick={() => setPrivacy(!hidden)}
+            title={hidden ? '金額を表示' : '金額を隠す'}
+            aria-label={hidden ? '金額を表示' : '金額を隠す'}
+            aria-pressed={hidden}
+          >
+            <EyeIcon off={hidden} />
+          </button>
           <button className="icon-btn" onClick={onReload} title="再読み込み" aria-label="再読み込み">
             <span className={loading ? 'spin' : ''}>↻</span>
           </button>

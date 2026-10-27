@@ -1,5 +1,6 @@
 import type { Summary } from '../lib/finance'
 import { yen } from '../lib/finance'
+import { Money } from './Money'
 
 interface Props {
   cur: Summary
@@ -18,7 +19,7 @@ function Col({ kind, label, value, top, total, n, picked, onPick }: ColProps) {
   return (
     <button className={`fv-col ${picked === kind ? 'active' : ''}`} onClick={() => onPick(kind)}>
       <div className="kpi-label"><span className="dot" style={{ background: `var(--${kind})` }} />{label}</div>
-      <div className="fv-value">{yen(value)}</div>
+      <div className="fv-value"><Money v={value} /></div>
       <div className="kpi-delta">
         {((value / total) * 100).toFixed(1)}%{n > 1 && <> ・ 月平均 {yen(value / n)}</>}
       </div>
@@ -54,7 +55,7 @@ export function FixedVariableCard({ cur, n, fixedTop, variableTop, onEdit, onPic
           <div className="fv-value">{fixedRatioToIncome == null ? '-' : `${fixedRatioToIncome.toFixed(1)}%`}</div>
           <div className="kpi-delta">
             収入から固定費を引いた残り<br />
-            <b className={cur.inc - cur.fixed >= 0 ? 'good' : 'bad'}>{yen(cur.inc - cur.fixed)}</b>
+            <b className={cur.inc - cur.fixed >= 0 ? 'good' : 'bad'}><Money v={cur.inc - cur.fixed} /></b>
             {n > 1 && <>（月平均 {yen((cur.inc - cur.fixed) / n)}）</>}
           </div>
         </div>
