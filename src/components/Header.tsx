@@ -23,15 +23,46 @@ const MODES = [
   { k: 'range', label: '期間' },
 ] as const
 
+const svgProps = {
+  width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor',
+  strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', className: 'ico', 'aria-hidden': true,
+} as const
+
 function EyeIcon({ off }: { off: boolean }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+    <svg {...svgProps}>
       <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
       <circle cx="12" cy="12" r="3" />
       {off && <line x1="3" y1="3" x2="21" y2="21" />}
     </svg>
   )
 }
+const ReloadIcon = () => (
+  <svg {...svgProps}><path d="M21 12a9 9 0 1 1-2.64-6.36" /><polyline points="21 3 21 9 15 9" /></svg>
+)
+const GearIcon = () => (
+  <svg {...svgProps}>
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+  </svg>
+)
+const SunIcon = () => (
+  <svg {...svgProps}>
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+  </svg>
+)
+const MoonIcon = () => (
+  <svg {...svgProps}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
+)
+const ChevronIcon = ({ dir }: { dir: 'l' | 'r' }) => (
+  <svg {...svgProps}><polyline points={dir === 'l' ? '15 18 9 12 15 6' : '9 18 15 12 9 6'} /></svg>
+)
+const THEMES = [
+  { k: 'auto', label: 'Auto', title: 'システムに連動' },
+  { k: 'light', label: <SunIcon />, title: 'ライト' },
+  { k: 'dark', label: <MoonIcon />, title: 'ダーク' },
+] as const
 
 export function Header({ periods, view, range: [a, b], onView, theme, onTheme, onReload, onSettings, live, loading }: Props) {
   const last = periods.length - 1
@@ -64,22 +95,23 @@ export function Header({ periods, view, range: [a, b], onView, theme, onTheme, o
       </div>
 
       <div className="controls">
-        <div className="ctrl-row">
+        <div className="c-modes">
           <div className="seg" role="tablist" aria-label="表示単位">
             {MODES.map(m => (
               <button key={m.k} className={view.mode === m.k ? 'on' : ''} onClick={() => switchMode(m.k)}>{m.label}</button>
             ))}
           </div>
-
+        </div>
+        <div className="c-picker">
           {view.mode === 'month' && (
             <>
-              <button className="icon-btn" disabled={a <= 0} onClick={() => setMonth(a - 1)} aria-label="前の期間">‹</button>
+              <button className="icon-btn" disabled={a <= 0} onClick={() => setMonth(a - 1)} aria-label="前の期間"><ChevronIcon dir="l" /></button>
               <select className="field grow" value={a} onChange={e => setMonth(Number(e.target.value))} aria-label="期間">
                 {periods.map((q, i) => ({ q, i })).reverse().map(({ q, i }) => (
                   <option key={q.start} value={i}>{periodRange(q)}</option>
                 ))}
               </select>
-              <button className="icon-btn" disabled={a >= last} onClick={() => setMonth(a + 1)} aria-label="次の期間">›</button>
+              <button className="icon-btn" disabled={a >= last} onClick={() => setMonth(a + 1)} aria-label="次の期間"><ChevronIcon dir="r" /></button>
             </>
           )}
 
@@ -107,8 +139,7 @@ export function Header({ periods, view, range: [a, b], onView, theme, onTheme, o
             </span>
           )}
         </div>
-
-        <div className="ctrl-row">
+        <div className="c-tools">
           <button
             className={`icon-btn ${hidden ? 'on' : ''}`}
             onClick={() => setPrivacy(!hidden)}
@@ -119,13 +150,13 @@ export function Header({ periods, view, range: [a, b], onView, theme, onTheme, o
             <EyeIcon off={hidden} />
           </button>
           <button className="icon-btn" onClick={onReload} title="再読み込み" aria-label="再読み込み">
-            <span className={loading ? 'spin' : ''}>↻</span>
+            <span className={`ico-wrap ${loading ? 'spin' : ''}`}><ReloadIcon /></span>
           </button>
-          {onSettings && <button className="icon-btn" onClick={onSettings} title="Dropbox 設定" aria-label="設定">⚙︎</button>}
+          {onSettings && <button className="icon-btn" onClick={onSettings} title="Dropbox 設定" aria-label="設定"><GearIcon /></button>}
           <div className="seg" role="radiogroup" aria-label="テーマ">
-            {(['auto', 'light', 'dark'] as const).map(t => (
-              <button key={t} className={theme === t ? 'on' : ''} onClick={() => onTheme(t)} title={t === 'auto' ? 'システムに連動' : undefined}>
-                {t === 'auto' ? 'Auto' : t === 'light' ? '☀︎' : '☾'}
+            {THEMES.map(t => (
+              <button key={t.k} className={theme === t.k ? 'on' : ''} onClick={() => onTheme(t.k)} title={t.title} aria-label={t.title}>
+                {t.label}
               </button>
             ))}
           </div>
