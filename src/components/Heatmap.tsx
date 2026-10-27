@@ -6,12 +6,12 @@ interface Props {
   cats: string[]
   matrix: number[][] // [cat][period]
   catColor: Record<string, string>
-  idx: number
+  range: [number, number]
   dark: boolean
   onCell: (cat: string, periodIdx: number) => void
 }
 
-export function Heatmap({ periods, cats, matrix, catColor, idx, dark, onCell }: Props) {
+export function Heatmap({ periods, cats, matrix, catColor, range: [ra, rb], dark, onCell }: Props) {
   return (
     <div className="card span-12">
       <div className="card-title">カテゴリ × 期間 ヒートマップ <small>セルをクリックで明細を絞り込み</small></div>
@@ -20,7 +20,7 @@ export function Heatmap({ periods, cats, matrix, catColor, idx, dark, onCell }: 
           <thead>
             <tr>
               <th className="row" />
-              {periods.map((p, i) => <th key={p.start} className={i === idx ? 'cur' : ''}>{periodLabel(p)}</th>)}
+              {periods.map((p, i) => <th key={p.start} className={i >= ra && i <= rb ? 'cur' : ''}>{periodLabel(p)}</th>)}
               <th>平均</th>
             </tr>
           </thead>
@@ -42,7 +42,8 @@ export function Heatmap({ periods, cats, matrix, catColor, idx, dark, onCell }: 
                         onClick={() => onCell(c, i)}
                         style={{
                           background: alpha(col, 0.06 + a * 0.55),
-                          outline: i === idx ? `2px solid ${col}` : undefined,
+                          outline: i >= ra && i <= rb ? `2px solid ${col}` : undefined,
+                          outlineOffset: -1,
                           color: a > 0.6 && !dark ? '#fff' : undefined,
                         }}
                       >

@@ -4,16 +4,26 @@ export const isCounted = (r: Txn) => r.target && !r.transfer
 export const isIncome = (r: Txn) => r.large === '収入'
 export const isExpense = (r: Txn) => isCounted(r) && !isIncome(r)
 
-export interface Summary { inc: number; exp: number; net: number }
+export interface Summary { inc: number; exp: number; net: number; fixed: number; variable: number }
 
-export function summarize(list: Txn[]): Summary {
-  let inc = 0, exp = 0
+export function summarize(list: Txn[], isFixed: (r: Txn) => boolean = () => false): Summary {
+  let inc = 0, exp = 0, fixed = 0
   for (const r of list) {
     if (!isCounted(r)) continue
     if (isIncome(r)) inc += r.amount
-    else exp -= r.amount
+    else {
+      exp -= r.amount
+      if (isFixed(r)) fixed -= r.amount
+    }
   }
-  return { inc, exp, net: inc - exp }
+  return { inc, exp, net: inc - exp, fixed, variable: exp - fixed }
+}
+
+export function addSummary(list: Summary[]): Summary {
+  return list.reduce(
+    (s, x) => ({ inc: s.inc + x.inc, exp: s.exp + x.exp, net: s.net + x.net, fixed: s.fixed + x.fixed, variable: s.variable + x.variable }),
+    { inc: 0, exp: 0, net: 0, fixed: 0, variable: 0 },
+  )
 }
 
 export const days = (p: Period) =>

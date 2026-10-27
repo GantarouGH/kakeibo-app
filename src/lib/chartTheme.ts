@@ -10,6 +10,7 @@ ChartJS.register(
 
 export interface ChartColors {
   text: string; muted: string; grid: string; accent: string; income: string; expense: string; font: string
+  fixed: string; variable: string
 }
 
 /** CSS 変数から現在テーマの色を取得し Chart.js の既定値に適用 */
@@ -19,6 +20,7 @@ export function readColors(): ChartColors {
   const c: ChartColors = {
     text: v('--text'), muted: v('--muted'), grid: v('--grid'), accent: v('--accent'),
     income: v('--income'), expense: v('--expense'), font: v('--font'),
+    fixed: v('--fixed'), variable: v('--variable'),
   }
   ChartJS.defaults.color = c.muted
   ChartJS.defaults.borderColor = c.grid
